@@ -1,6 +1,5 @@
 #include <REGX51.H>
 #include "AT24C02.h"
-#include "keyboard.h"
 #include "LCD1602.h"
 #include <string.h>
 #include "MatrixKey.h"
