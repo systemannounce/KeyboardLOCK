@@ -3,96 +3,110 @@
 #include "keyboard.h"
 #include "LCD1602.h"
 #include <string.h>
+#include "MatrixKey.h"
+#include <intrins.h>
+#include "Buzzer.h"
+
+
+void Delay1(unsigned int s)
+{
+	while(s--)
+	{
+		unsigned char i, j;
+		_nop_();
+		i = 2;
+		j = 199;
+		do
+		{
+			while (--j);
+		} while (--i);
+	}
+}
 
 unsigned char temp;
-unsigned int key , current , correct , et = 1 , mode = 0 , open = 0;
+unsigned int key , current = 0 , correct = 0 , et = 1 , mode = 0 , open = 0;
 // unsigned char ;
-unsigned int password[5] , passwd[5];
+unsigned int password , passwd[6] , number[6] = {2 , 3 , 5 , 7 , 11 , 13};
 void main()
 {
     unsigned int i;
+    LCD_Init();
     init_keyboard();
     current = 0;
-    for(i = 0 ; i < 6 ; i++)
-    {
-        password[i] = AT24C02_ReadByte(i);
-    }
+    // AT24C02_WriteByte(0,41);
+    // Delay1(100);
+    password = AT24C02_ReadByte(0);
 	while(1)
     {
-        temp = scan_keyboard();//不确定是不是要加delay
-        if(temp == "1")key = 1;
-        if(temp == "2")key = 2;
-        if(temp == "3")key = 3;
-        if(temp == "4")key = 4;
-        if(temp == "5")key = 5;
-        if(temp == "6")key = 6;
-        if(temp == "7")key = 7;
-        if(temp == "8")key = 8;
-        if(temp == "9")key = 9;
-        if(temp == "0")key = 0;
-        if(temp == "*")key = 11;
-        if(temp == "#")key = 12;
-        if(temp == "A")key = 14;
-        if(temp == "B")key = 24;
-        if(temp == "C")key = 34;
-        if(temp == "D")key = 44;
-        if(temp == 0){key = 99;et = 1;}
+        key = MatrixKey();
 
-        if(key > 0 && key < 13 && et == 1 && current < 6)
+        if(key > 0 && key < 13 && current < 6)
         {
             passwd[current] = key;
             current++;
-            et = 0;
         }
-        if(key>13 && key<50 && et == 1)
+        if(key>13 && key<50)
         {
-            if(key == 14){current=current-1;passwd[current] = 0;}
-            if(key == 24){memset(passwd, 0, sizeof(passwd));current = 0;}
+            if(key == 14){current=current-1;if(current > 6)current = 0;passwd[current] = 0;open = 0;}
+            if(key == 24){memset(passwd, 0, sizeof(passwd));current = 0;open = 0;}
             if(key == 34){if(open == 1){memset(passwd, 0, sizeof(passwd));current = 0;mode = !mode;}}
             if(key == 44)
             {
                 if(mode == 0 && current == 6)
                 {
                     correct = 0;
+                    open = 0;
+                    temp = 0;
                     for(i=0;i<6;i++)
                     {
-                        if(passwd[i] == password[i])correct++;
-                        else break;
-
+                        temp = temp + passwd[i]*number[i];
                     }
-                    if(correct == 6)
+                    if(temp == password)open = 1;
+                    if(temp != password)open = 2;
+                    if(open == 1)
                     {
                         //right
                         open = 1;
+                        Buzzer_Time(200);
                     }
-                    if(correct < 6)
+                    if(open == 2)
                     {
                         //wrong
+                        open = 2;
+                        Buzzer_Time(500);
                     }
                 }
                 if(mode == 1 && current == 6)
                 {
+                    password = 0;
+                    open = 0;
+                    mode = 0;
                     for(i=0;i<6;i++)
                     {
-                        password[i] = passwd[i];
-                        passwd[i] = 0;
-                        AT24C02_WriteByte(i , password[i]);
+                        password = password + passwd[i]*number[i];
                     }
+                    memset(passwd, 0, sizeof(passwd));
+                    current = 0;
+                    AT24C02_WriteByte(0,password);
+                    LCD_ShowString(2,8,"pwHASchan");
                 }
             }
-            et = 0;
         }
         //interface
-        LCD_ShowString(1,1,"PASSWORD:");
-        if(mode == 1)LCD_ShowString(1,11,"RESET");
-        if(mode == 0)LCD_ShowString(1,11,"ENTER");
+        if(open == 0)LCD_ShowString(1,1,"PASSWORD:");
+        if(open == 1)LCD_ShowString(1,1,"SUCCESS  ");
+        if(open == 2)LCD_ShowString(1,1,"WRONG PW ");
+
+        if(mode == 1)LCD_ShowString(1,12,"RESET");
+        if(mode == 0)LCD_ShowString(1,12,"ENTER");
+        
         if(current == 0)LCD_ShowString(2,1,"      ");
         else if(current == 1)LCD_ShowString(2,1,"*     ");
         else if(current == 2)LCD_ShowString(2,1,"**    ");
         else if(current == 3)LCD_ShowString(2,1,"***   ");
         else if(current == 4)LCD_ShowString(2,1,"****  ");
         else if(current == 5)LCD_ShowString(2,1,"***** ");
-        else if(current == 3)LCD_ShowString(2,1,"******");
+        else if(current == 6)LCD_ShowString(2,1,"******");
 
     }
 }
