@@ -36,15 +36,15 @@ void main()
         if(temp == "B")key = 24;
         if(temp == "C")key = 34;
         if(temp == "D")key = 44;
-        if(temp == 0){key = 99;et = 1};
+        if(temp == 0){key = 99;et = 1;}
 
-        if(key > 0 && key < 13 && et = 1 && current < 6)
+        if(key > 0 && key < 13 && et == 1 && current < 6)
         {
             passwd[current] = key;
             current++;
             et = 0;
         }
-        if(key>13 && key<50 && et = 1)
+        if(key>13 && key<50 && et == 1)
         {
             if(key == 14){current=current-1;passwd[current] = 0;}
             if(key == 24){memset(passwd, 0, sizeof(passwd));current = 0;}
@@ -85,14 +85,14 @@ void main()
         //interface
         LCD_ShowString(1,1,"PASSWORD:");
         if(mode == 1)LCD_ShowString(1,11,"RESET");
-        if(mode == 0)LCD_ShowString(1,11,"ENTER")
-        if(current == 0)LCD_ShowString(2,1,"      ")
-        else if(current == 1)LCD_ShowString(2,1,"*     ")
-        else if(current == 2)LCD_ShowString(2,1,"**    ")
-        else if(current == 3)LCD_ShowString(2,1,"***   ")
-        else if(current == 4)LCD_ShowString(2,1,"****  ")
-        else if(current == 5)LCD_ShowString(2,1,"***** ")
-        else if(current == 3)LCD_ShowString(2,1,"******")
+        if(mode == 0)LCD_ShowString(1,11,"ENTER");
+        if(current == 0)LCD_ShowString(2,1,"      ");
+        else if(current == 1)LCD_ShowString(2,1,"*     ");
+        else if(current == 2)LCD_ShowString(2,1,"**    ");
+        else if(current == 3)LCD_ShowString(2,1,"***   ");
+        else if(current == 4)LCD_ShowString(2,1,"****  ");
+        else if(current == 5)LCD_ShowString(2,1,"***** ");
+        else if(current == 3)LCD_ShowString(2,1,"******");
 
     }
 }
