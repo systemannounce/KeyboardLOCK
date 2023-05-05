@@ -29,4 +29,7 @@ unsigned char IR_GetRepeatFlag(void);
 unsigned char IR_GetAddress(void);
 unsigned char IR_GetCommand(void);
 
+extern unsigned char IR_Address;
+extern unsigned char IR_Command;
+
 #endif

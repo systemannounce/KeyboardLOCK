@@ -34,7 +34,6 @@ void main()
     LCD_Init();
     IR_Init();
     UART_Init(0XFA);
-    init_keyboard();
     current = 0;
     // AT24C02_WriteByte(0,41);
     // Delay1(100);
@@ -42,25 +41,23 @@ void main()
 	while(1)
     {
         key = MatrixKey();
-        command =0;
         command = IR_GetCommand();
-        if(command == IR_START_STOP && ir != 99)ir = 99;
-        if(command == IR_0 && ir != 10){key = 10;ir = 10;}
-        if(command == IR_1 && ir != 1){key = 1;ir = 1;}
-        if(command == IR_2 && ir != 2){key = 2;ir = 2;}
-        if(command == IR_3 && ir != 3){key = 3;ir = 3;}
-        if(command == IR_4 && ir != 4){key = 4;ir = 4;}
-        if(command == IR_5 && ir != 5){key = 5;ir = 5;}
-        if(command == IR_6 && ir != 6){key = 6;ir = 6;}
-        if(command == IR_7 && ir != 7){key = 7;ir = 7;}
-        if(command == IR_8 && ir != 8){key = 8;ir = 8;}
-        if(command == IR_9 && ir != 9){key = 9;ir = 9;}
-        if(command == IR_RPT && ir != 11){key = 11;ir = 11;}
-        if(command == IR_USD && ir != 15){key = 12;ir = 12;}
-        if(command == IR_PREVIOUS && ir != 14){key = 14;ir = 14;}
-        if(command == IR_MUTE && ir != 24){key = 24;ir = 24;}
-        if(command == IR_EQ && ir != 34){key = 34;ir = 34;}
-        if(command == IR_POWER && ir != 44){key = 44;ir = 44;}
+        if(command == IR_0){key = 10;IR_Command = 0;}
+        if(command == IR_1){key = 1;IR_Command = 0;}
+        if(command == IR_2){key = 2;IR_Command = 0;}
+        if(command == IR_3){key = 3;IR_Command = 0;}
+        if(command == IR_4){key = 4;IR_Command = 0;}
+        if(command == IR_5){key = 5;IR_Command = 0;}
+        if(command == IR_6){key = 6;IR_Command = 0;}
+        if(command == IR_7){key = 7;IR_Command = 0;}
+        if(command == IR_8){key = 8;IR_Command = 0;}
+        if(command == IR_9){key = 9;IR_Command = 0;}
+        if(command == IR_RPT){key = 11;IR_Command = 0;}
+        if(command == IR_USD){key = 12;IR_Command = 0;}
+        if(command == IR_PREVIOUS){key = 14;IR_Command = 0;}
+        if(command == IR_MUTE){key = 24;IR_Command = 0;}
+        if(command == IR_EQ){key = 34;IR_Command = 0;}
+        if(command == IR_POWER){key = 44;IR_Command = 0;}
 
         if(key > 0 && key < 11 && current < 6)
         {
