@@ -114,7 +114,7 @@ void main()
         //interface
         if(open == 0)LCD_ShowString(1,1,"PASSWORD:");
         if(open == 1)LCD_ShowString(1,1,"SUCCESS  ");
-        if(open == 2)LCD_ShowString(1,1,"WRONG PW ");
+        if(open == 2)LCD_ShowString(1,1,"ERROR PW ");
 
         if(mode == 1)LCD_ShowString(1,12,"RESET");
         if(mode == 0)LCD_ShowString(1,12,"ENTER");
