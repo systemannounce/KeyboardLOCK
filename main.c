@@ -59,7 +59,7 @@ void main()
         if(command == IR_EQ){key = 34;IR_Command = 0;}
         if(command == IR_POWER){key = 44;IR_Command = 0;}
 
-        if(key > 0 && key < 11 && current < 6)
+        if(key > 0 && key < 13 && current < 6)
         {
             passwd[current] = key;
             current++;
