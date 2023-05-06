@@ -24,8 +24,8 @@ void Delay1(unsigned int s)
 	}
 }
 
-unsigned char temp , command;
-unsigned int key , current = 0 , correct = 0 , et = 1 , mode = 0 , open = 0 , ir = 0;
+unsigned char  command;
+unsigned int key , current = 0 , correct = 0 , et = 1 , mode = 0 , open = 0 , temp , ir = 0;
 // unsigned char ;
 unsigned int password , passwd[6] , number[6] = {2 , 3 , 5 , 7 , 11 , 13};
 void main()
@@ -35,9 +35,11 @@ void main()
     IR_Init();
     UART_Init(0XFA);
     current = 0;
-    // AT24C02_WriteByte(0,41);
-    // Delay1(100);
-    password = AT24C02_ReadByte(0);
+    // AT24C02_WriteByte(0 , 0);
+    // Delay1(20);
+    // AT24C02_WriteByte(1 , 41);
+    // Delay1(20);
+    password = AT24C02_ReadByte(0) * 255 + AT24C02_ReadByte(1);
 	while(1)
     {
         key = MatrixKey();
@@ -106,7 +108,9 @@ void main()
                     }
                     memset(passwd, 0, sizeof(passwd));
                     current = 0;
-                    AT24C02_WriteByte(0,password);
+                    AT24C02_WriteByte(0 , password/255);
+                    Delay1(50);
+                    AT24C02_WriteByte(1 , password%255);
                     LCD_ShowString(2,8,"pwHASchan");
                 }
             }
@@ -130,6 +134,13 @@ void main()
         if(P3_0 == 0)
         {
             UART_SendByte(0x99);
+        }
+        if(P3_1 == 0)
+        {
+            AT24C02_WriteByte(0 , 0);
+            Delay1(20);
+            AT24C02_WriteByte(1 , 41);
+            Delay1(20);
         }
     }
 }
