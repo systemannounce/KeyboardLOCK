@@ -24,10 +24,10 @@ void Delay1(unsigned int s)
 	}
 }
 
-unsigned char temp , command;
-unsigned int key , current = 0 , correct = 0 , et = 1 , mode = 0 , open = 0 , ir = 0;
+unsigned int key , current = 0 , correct = 0 , et = 1 , mode = 0 , open = 0 , ir = 0 , password[6] , passwd[6];
 // unsigned char ;
-unsigned int password , passwd[6] , number[6] = {2 , 3 , 5 , 7 , 11 , 13};
+unsigned char temp , command ;
+// unsigned int code number[6] = {2 , 3 , 5 , 7 , 11 , 13};
 void main()
 {
     unsigned int i;
@@ -35,9 +35,17 @@ void main()
     IR_Init();
     UART_Init(0XFA);
     current = 0;
-    // AT24C02_WriteByte(0,41);
-    // Delay1(100);
-    password = AT24C02_ReadByte(0);
+    //防止以外复位密码脚本123456
+    // for(i = 0;i < 6;i++)
+    // {
+    //     AT24C02_WriteByte(i , i+1);
+    //     Delay1(50);
+    // }
+    for(i = 0;i < 6;i++)
+    {
+        password[i] = AT24C02_ReadByte(i);
+        Delay1(50);
+    }
 	while(1)
     {
         key = MatrixKey();
@@ -78,10 +86,10 @@ void main()
                     temp = 0;
                     for(i=0;i<6;i++)
                     {
-                        temp = temp + passwd[i]*number[i];
+                        if(password[i] == passwd[i])correct++;
                     }
-                    if(temp == password)open = 1;
-                    if(temp != password)open = 2;
+                    if(correct == 6)open = 1;
+                    if(correct != 6)open = 2;
                     if(open == 1)
                     {
                         //right
@@ -97,16 +105,17 @@ void main()
                 }
                 if(mode == 1 && current == 6)
                 {
-                    password = 0;
+                    memset(password, 0, sizeof(password));
                     open = 0;
                     mode = 0;
                     for(i=0;i<6;i++)
                     {
-                        password = password + passwd[i]*number[i];
+                        password[i] = passwd[i];
+                        AT24C02_WriteByte(i , passwd[i]);
+                        Delay1(50);
                     }
                     memset(passwd, 0, sizeof(passwd));
                     current = 0;
-                    AT24C02_WriteByte(0,password);
                     LCD_ShowString(2,8,"pwHASchan");
                 }
             }
